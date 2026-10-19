@@ -123,35 +123,32 @@ build_architecture() {
         return 1
     fi
 
-    # Build packages for appropriate Debian distributions
-    declare -a arr=("bookworm" "trixie" "forky" "sid")
+    # One package for every suite: upstream ships one binary per architecture,
+    # so only the old ~<suite> version suffix ever differed. The fixed ~griffo
+    # keeps it below the distro's own build of the same version.
+    FULL_VERSION="$rgrc_VERSION-${BUILD_VERSION}~griffo_${build_arch}"
+    echo "  Building $FULL_VERSION"
 
-    for dist in "${arr[@]}"; do
-        FULL_VERSION="$rgrc_VERSION-${BUILD_VERSION}~${dist}_${build_arch}"
-        echo "  Building $FULL_VERSION"
+    if ! docker build . -t "rgrc-$build_arch" \
+        --build-arg rgrc_VERSION="$rgrc_VERSION" \
+        --build-arg BUILD_VERSION="$BUILD_VERSION" \
+        --build-arg FULL_VERSION="$FULL_VERSION" \
+        --build-arg ARCH="$build_arch" \
+        --build-arg RGRC_RELEASE="$rgrc_release"; then
+        echo "❌ Failed to build Docker image for $build_arch"
+        return 1
+    fi
 
-        if ! docker build . -t "rgrc-$dist-$build_arch" \
-            --build-arg DEBIAN_DIST="$dist" \
-            --build-arg rgrc_VERSION="$rgrc_VERSION" \
-            --build-arg BUILD_VERSION="$BUILD_VERSION" \
-            --build-arg FULL_VERSION="$FULL_VERSION" \
-            --build-arg ARCH="$build_arch" \
-            --build-arg RGRC_RELEASE="$rgrc_release"; then
-            echo "❌ Failed to build Docker image for $dist on $build_arch"
-            return 1
-        fi
+    id="$(docker create "rgrc-$build_arch")"
+    if ! docker cp "$id:/rgrc_$FULL_VERSION.deb" - > "./rgrc_$FULL_VERSION.deb"; then
+        echo "❌ Failed to extract .deb package for $build_arch"
+        return 1
+    fi
 
-        id="$(docker create "rgrc-$dist-$build_arch")"
-        if ! docker cp "$id:/rgrc_$FULL_VERSION.deb" - > "./rgrc_$FULL_VERSION.deb"; then
-            echo "❌ Failed to extract .deb package for $dist on $build_arch"
-            return 1
-        fi
-
-        if ! tar -xf "./rgrc_$FULL_VERSION.deb"; then
-            echo "❌ Failed to extract .deb contents for $dist on $build_arch"
-            return 1
-        fi
-    done
+    if ! tar -xf "./rgrc_$FULL_VERSION.deb"; then
+        echo "❌ Failed to extract .deb contents for $build_arch"
+        return 1
+    fi
 
     # Clean up extracted directory
     rm -rf "$rgrc_release" || true

@@ -1,5 +1,5 @@
 Package: rgrc
-Version: rgrc_VERSION-BUILD_VERSION~DIST
+Version: rgrc_VERSION-BUILD_VERSION~griffo
 Architecture: SUPPORTED_ARCHITECTURES
 Maintainer: Dario Griffo <dariogriffo@gmail.com>
 Section: utils

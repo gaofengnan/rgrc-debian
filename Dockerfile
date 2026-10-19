@@ -1,7 +1,5 @@
-ARG DEBIAN_DIST=bookworm
-FROM debian:$DEBIAN_DIST
+FROM debian:bookworm
 
-ARG DEBIAN_DIST
 ARG rgrc_VERSION
 ARG BUILD_VERSION
 ARG FULL_VERSION
@@ -37,11 +35,9 @@ COPY output/changelog.Debian /output/usr/share/doc/rgrc/
 COPY output/README.md /output/usr/share/doc/rgrc/
 RUN chmod 644 /output/usr/share/doc/rgrc/* /output/usr/share/bash-completion/completions/rgrc /output/usr/share/fish/vendor_completions.d/rgrc.fish /output/usr/share/zsh/vendor-completions/_rgrc
 
-RUN sed -i "s/DIST/$DEBIAN_DIST/" /output/usr/share/doc/rgrc/changelog.Debian
 RUN sed -i "s/FULL_VERSION/$FULL_VERSION/" /output/usr/share/doc/rgrc/changelog.Debian
-RUN sed -i "s/DIST/$DEBIAN_DIST/" /output/DEBIAN/control
 RUN sed -i "s/rgrc_VERSION/$rgrc_VERSION/" /output/DEBIAN/control
 RUN sed -i "s/BUILD_VERSION/$BUILD_VERSION/" /output/DEBIAN/control
 RUN sed -i "s/SUPPORTED_ARCHITECTURES/$ARCH/" /output/DEBIAN/control
 
-RUN dpkg-deb --build /output /rgrc_${FULL_VERSION}.deb
+RUN dpkg-deb -Zxz --build /output /rgrc_${FULL_VERSION}.deb
