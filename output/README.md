@@ -1,5 +1,7 @@
 # rgrc - Rusty Generic Colouriser
 
+> Fork of [dariogriffo/rgrc-debian](https://github.com/dariogriffo/rgrc-debian) (MIT); the original packaging is by Dario Griffo. Served at [deb.gaofn.xyz](https://deb.gaofn.xyz) for Debian 12 (bookworm) and 13 (trixie).
+
 <!-- Repository badges -->
 
 [![Rust](https://img.shields.io/badge/rust-2024--edition-orange)](https://www.rust-lang.org/)

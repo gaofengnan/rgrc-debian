@@ -1,7 +1,7 @@
 Package: rgrc
-Version: rgrc_VERSION-BUILD_VERSION~griffo
+Version: rgrc_VERSION-BUILD_VERSION~gaofn
 Architecture: SUPPORTED_ARCHITECTURES
-Maintainer: Dario Griffo <dariogriffo@gmail.com>
+Maintainer: Fengnan Gao <gao.fengnan@gmail.com>
 Section: utils
 Priority: optional
 Homepage: https://github.com/lazywalker/rgrc
